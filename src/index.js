@@ -1,17 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+function calculate() {
+  // Get the values from the input boxes
+  const sales = parseFloat(document.getElementById("sales").value) || 0;
+  const expenses = parseFloat(document.getElementById("expenses").value) || 0;
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+  // Calculate profit
+  const profit = sales - expenses;
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  // Show result
+  const output = document.getElementById("output");
+  output.textContent = `Sales: ₱${sales} | Expenses: ₱${expenses} | Profit: ₱${profit}`;
+
+  // --- Add to History ---
+  const history = document.getElementById("history");
+  const li = document.createElement("li");
+  li.textContent = `Sales: ₱${sales}, Expenses: ₱${expenses}, Profit: ₱${profit}`;
+  history.appendChild(li);
+
+}
+function clearHistory() {
+  const history = document.getElementById("history");
+  history.innersHTML = ""; // clears all <li> inside the <ul>
+}
