@@ -24,7 +24,7 @@ function App() {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h1>Sales & Expenses Calculator</h1>
+      <h1>Fishpond MS</h1>
 
       <div>
         <label>Sales: </label>
