@@ -1,61 +1,19 @@
+// src/App.js
 import React, { useState } from "react";
+import InventoryPage from "./pages/InventoryPage";
+import RecordsPage from "./pages/RecordsPage";
 
 function App() {
-  const [sales, setSales] = useState("");
-  const [expenses, setExpenses] = useState("");
-  const [output, setOutput] = useState("");
-  const [history, setHistory] = useState([]);
-
-  function calculate() {
-    const s = parseFloat(sales) || 0;
-    const e = parseFloat(expenses) || 0;
-    const profit = s - e;
-    const result = `Sales: ₱${s} | Expenses: ₱${e} | Profit: ₱${profit}`;
-
-    setOutput(result);
-    setHistory([...history, result]);
-    setSales("");
-    setExpenses("");
-  }
-
-  function clearHistory() {
-    setHistory([]);
-  }
+  const [page, setPage] = useState("inventory");
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h1>Fishpond MS</h1>
+    <div>
+      <nav style={{ marginBottom: "20px" }}>
+        <button onClick={() => setPage("inventory")}>Inventory</button>
+        <button onClick={() => setPage("records")}>Records</button>
+      </nav>
 
-      <div>
-        <label>Sales: </label>
-        <input
-          type="number"
-          value={sales}
-          onChange={(e) => setSales(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label>Expenses: </label>
-        <input
-          type="number"
-          value={expenses}
-          onChange={(e) => setExpenses(e.target.value)}
-        />
-      </div>
-
-      <button onClick={calculate}>Calculate Profit</button>
-
-      <p>{output}</p>
-
-      <h2>History</h2>
-      <ul>
-        {history.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-
-      <button onClick={clearHistory}>Clear History</button>
+      {page === "inventory" ? <InventoryPage /> : <RecordsPage />}
     </div>
   );
 }
