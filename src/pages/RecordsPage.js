@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import supabase from "../supabaseClient"; 
-
-
-
+import supabase from "../supabaseClient";
 
 function Records() {
   const [records, setRecords] = useState([]);
   const [transaction, setTransaction] = useState("");
-  const [amount, setAmount] = useState("");
+  const [sales, setSales] = useState("");
+  const [expenses, setExpenses] = useState("");
   const [date, setDate] = useState("");
 
   useEffect(() => {
@@ -21,14 +19,20 @@ function Records() {
   }
 
   async function addRecord() {
-    if (!transaction || !amount || !date) return;
-    const { error } = await supabase
-      .from("records")
-      .insert([{ transaction, amount, date }]);
-    if (error) console.error("Insert error:", error);
+    if (!transaction || !date) return;
+    const { error } = await supabase.from("records").insert([
+      {
+        transaction,
+        sales: parseFloat(sales) || 0,
+        expenses: parseFloat(expenses) || 0,
+        date,
+      },
+    ]);
+    if (error) console.error("Insert error:", error.message, error.details);
     else {
       setTransaction("");
-      setAmount("");
+      setSales("");
+      setExpenses("");
       setDate("");
       fetchRecords(); // refresh table
     }
@@ -36,17 +40,24 @@ function Records() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Sales & Expenses</h1>
+      <h1>Sales & Expenses Records</h1>
+
       <input
         placeholder="Transaction"
         value={transaction}
         onChange={(e) => setTransaction(e.target.value)}
       />
       <input
-        placeholder="Amount"
+        placeholder="Sales"
         type="number"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
+        value={sales}
+        onChange={(e) => setSales(e.target.value)}
+      />
+      <input
+        placeholder="Expenses"
+        type="number"
+        value={expenses}
+        onChange={(e) => setExpenses(e.target.value)}
       />
       <input
         type="date"
@@ -61,7 +72,8 @@ function Records() {
           <tr>
             <th>ID</th>
             <th>Transaction</th>
-            <th>Amount</th>
+            <th>Sales</th>
+            <th>Expenses</th>
             <th>Date</th>
           </tr>
         </thead>
@@ -70,7 +82,8 @@ function Records() {
             <tr key={r.id}>
               <td>{r.id}</td>
               <td>{r.transaction}</td>
-              <td>{r.amount}</td>
+              <td>{r.sales}</td>
+              <td>{r.expenses}</td>
               <td>{r.date}</td>
             </tr>
           ))}
