@@ -14,22 +14,30 @@ function CroppingCyclesPage() {
   const [newTx, setNewTx] = useState({}); // { phaseId: { type, amount, description } }
   const [activePhase, setActivePhase] = useState({}); // { cycleId: phaseIndex }
   // Modal state and handlers
-  const [showModal, setShowModal] = useState(false);
+  const [showTxModal, setShowTxModal] = useState(false);
   const [modalPhaseId, setModalPhaseId] = useState(null);
-  const openModal = (phaseId) => {
+  const [showCycleModal, setShowCycleModal] = useState(false);
+  const openTxModal = (phaseId) => {
     setModalPhaseId(phaseId);
-    setShowModal(true);
+    setShowTxModal(true);
   };
-  const closeModal = () => {
-    setShowModal(false);
+  const closeTxModal = () => {
+    setShowTxModal(false);
     setModalPhaseId(null);
   };
-  const handleModalSubmit = (e) => {
+  const handleTxModalSubmit = (e) => {
     e.preventDefault();
     if (modalPhaseId) {
       addTransaction(modalPhaseId);
-      closeModal();
+      closeTxModal();
     }
+  };
+  const openCycleModal = () => setShowCycleModal(true);
+  const closeCycleModal = () => setShowCycleModal(false);
+  const handleCycleModalSubmit = (e) => {
+    e.preventDefault();
+    addCycle();
+    closeCycleModal();
   };
 
   useEffect(() => {
@@ -145,16 +153,44 @@ function CroppingCyclesPage() {
   return (
     <div style={{ padding: 24, fontFamily: 'Inter, Segoe UI, Arial, sans-serif', background: '#181a1b', minHeight: '100vh' }}>
       <h2 style={{ fontWeight: 800, fontSize: 32, marginBottom: 28, color: '#fff', letterSpacing: 1 }}>Lim Fishpond Croppings Cycles</h2>
-      <div style={{ marginBottom: 28, display: 'flex', gap: 16 }}>
-        <input
-          type="text"
-          placeholder="New cycle name"
-          value={newCycleName}
-          onChange={e => setNewCycleName(e.target.value)}
-          style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid #23272a', fontSize: 17, width: 240, background: '#23272a', color: '#fff' }}
-        />
-        <button onClick={addCycle} style={{ padding: '10px 24px', borderRadius: 8, background: '#7289da', color: '#fff', fontWeight: 700, border: 'none', fontSize: 17, boxShadow: '0 2px 8px #7289da55', cursor: 'pointer' }}>Add Cycle</button>
-        <button onClick={() => openModal(null)} style={{ padding: '10px 24px', borderRadius: 8, background: '#28a745', color: '#fff', fontWeight: 700, border: 'none', fontSize: 17, boxShadow: '0 2px 8px #28a74555', cursor: 'pointer', marginLeft: 'auto' }}>Add Transaction</button>
+      <div style={{ marginBottom: 28, display: 'flex', gap: 16, justifyContent: 'flex-end' }}>
+        <button 
+          onClick={openCycleModal}
+          style={{
+            padding: '10px 0',
+            minWidth: 120,
+            borderRadius: 8,
+            background: '#23272a',
+            color: '#fff',
+            border: 'none',
+            fontWeight: 500,
+            fontSize: 14,
+            boxShadow: '0 1px 4px #181a1b',
+            cursor: 'pointer',
+            transition: 'background 0.2s',
+            opacity: 1,
+            textAlign: 'center',
+            marginRight: 8
+          }}
+        >Add Cycle</button>
+        <button 
+          onClick={() => openTxModal(null)}
+          style={{
+            padding: '10px 0',
+            minWidth: 120,
+            borderRadius: 8,
+            background: '#23272a',
+            color: '#fff',
+            border: 'none',
+            fontWeight: 500,
+            fontSize: 14,
+            boxShadow: '0 1px 4px #181a1b',
+            cursor: 'pointer',
+            transition: 'background 0.2s',
+            opacity: 1,
+            textAlign: 'center'
+          }}
+        >Add Transaction</button>
       </div>
       {loading ? <p style={{ color: '#fff' }}>Loading...</p> : null}
       {cycles.length === 0 && <p style={{ color: '#b9bbbe' }}>No cycles yet.</p>}
@@ -163,7 +199,27 @@ function CroppingCyclesPage() {
           <div key={cycle.id} style={{ background: '#23272a', borderRadius: 14, boxShadow: '0 2px 16px rgba(0,0,0,0.10)', padding: 32, marginBottom: 8 }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 18 }}>
               <span style={{ fontWeight: 700, fontSize: 24, color: '#fff', letterSpacing: 0.5 }}>{cycle.name}</span>
-              <button style={{ marginLeft: 20, padding: '8px 20px', borderRadius: 8, background: '#e55353', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer', fontSize: 16, boxShadow: '0 2px 8px #e5535355' }} onClick={() => deleteCycle(cycle.id)}>Delete</button>
+              <button 
+                style={{
+                  marginLeft: 16,
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  background: '#e55353',
+                  color: '#fff',
+                  border: 'none',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  boxShadow: '0 1px 4px #e5535333',
+                  transition: 'background 0.2s',
+                  opacity: 0.85
+                }} 
+                onClick={() => deleteCycle(cycle.id)}
+                title="Delete cycle"
+              >
+                <span style={{ display: 'inline-block', verticalAlign: 'middle', fontSize: 15, marginRight: 4 }}>🗑️</span>
+                Delete
+              </button>
             </div>
             {phases[cycle.id] ? (
               <>
@@ -195,7 +251,26 @@ function CroppingCyclesPage() {
                           <td style={{ textAlign: 'center', fontSize: 16 }}>{totals.harvest}</td>
                           <td style={{ textAlign: 'center', fontSize: 16 }}>
                             {isActive && idx < PHASES.length - 1 && (
-                              <button style={{ marginTop: 8, padding: '8px 20px', borderRadius: 8, background: '#28a745', color: '#fff', border: 'none', fontWeight: 700, cursor: 'pointer', fontSize: 15, boxShadow: '0 2px 8px #28a74555' }} onClick={() => handleNextPhase(cycle.id)}>Next Phase</button>
+                              <button 
+                                style={{
+                                  marginTop: 8,
+                                  padding: '10px 0',
+                                  minWidth: 120,
+                                  borderRadius: 8,
+                                  background: '#23272a',
+                                  color: '#fff',
+                                  border: 'none',
+                                  fontWeight: 500,
+                                  fontSize: 14,
+                                  boxShadow: '0 1px 4px #181a1b',
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s',
+                                  opacity: 1,
+                                  textAlign: 'center'
+                                }}
+                                onClick={() => handleNextPhase(cycle.id)}
+                                title="Next phase"
+                              >Next Phase</button>
                             )}
                           </td>
                         </tr>
@@ -224,11 +299,11 @@ function CroppingCyclesPage() {
           </div>
         ))}
       </div>
-      {showModal && (
+      {showTxModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(24,26,27,0.85)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: '#23272a', borderRadius: 16, boxShadow: '0 2px 24px rgba(0,0,0,0.18)', padding: 32, minWidth: 340, maxWidth: 400 }}>
             <h3 style={{ fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 18 }}>Add Transaction</h3>
-            <form onSubmit={handleModalSubmit}>
+            <form onSubmit={handleTxModalSubmit}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <select
                   value={modalPhaseId || ''}
@@ -269,8 +344,104 @@ function CroppingCyclesPage() {
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 24 }}>
-                <button type="button" onClick={closeModal} style={{ padding: '10px 20px', borderRadius: 8, background: '#36393f', color: '#fff', border: 'none', fontWeight: 700, fontSize: 16, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '10px 24px', borderRadius: 8, background: '#7289da', color: '#fff', fontWeight: 700, border: 'none', fontSize: 16, boxShadow: '0 2px 8px #7289da55', cursor: 'pointer' }}>Add</button>
+                <button 
+                  type="button" 
+                  onClick={closeTxModal} 
+                  style={{
+                    padding: '10px 0',
+                    minWidth: 120,
+                    borderRadius: 8,
+                    background: '#23272a',
+                    color: '#fff',
+                    border: 'none',
+                    fontWeight: 500,
+                    fontSize: 14,
+                    boxShadow: '0 1px 4px #181a1b',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                    opacity: 1,
+                    textAlign: 'center',
+                    marginRight: 8
+                  }}
+                >Cancel</button>
+                <button 
+                  type="submit" 
+                  style={{
+                    padding: '10px 0',
+                    minWidth: 120,
+                    borderRadius: 8,
+                    background: '#23272a',
+                    color: '#fff',
+                    border: 'none',
+                    fontWeight: 500,
+                    fontSize: 14,
+                    boxShadow: '0 1px 4px #181a1b',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                    opacity: 1,
+                    textAlign: 'center'
+                  }}
+                >Add</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showCycleModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(24,26,27,0.85)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#23272a', borderRadius: 16, boxShadow: '0 2px 24px rgba(0,0,0,0.18)', padding: 32, minWidth: 340, maxWidth: 400 }}>
+            <h3 style={{ fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 18 }}>Add Cropping Cycle</h3>
+            <form onSubmit={handleCycleModalSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <input
+                  type="text"
+                  placeholder="New cycle name"
+                  value={newCycleName}
+                  onChange={e => setNewCycleName(e.target.value)}
+                  style={{ padding: '10px', borderRadius: 8, border: '1px solid #36393f', fontSize: 16, background: '#181a1b', color: '#fff' }}
+                  required
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 24 }}>
+                <button 
+                  type="button" 
+                  onClick={closeCycleModal} 
+                  style={{
+                    padding: '10px 0',
+                    minWidth: 120,
+                    borderRadius: 8,
+                    background: '#23272a',
+                    color: '#fff',
+                    border: 'none',
+                    fontWeight: 500,
+                    fontSize: 14,
+                    boxShadow: '0 1px 4px #181a1b',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                    opacity: 1,
+                    textAlign: 'center',
+                    marginRight: 8
+                  }}
+                >Cancel</button>
+                <button 
+                  type="submit" 
+                  style={{
+                    padding: '10px 0',
+                    minWidth: 120,
+                    borderRadius: 8,
+                    background: '#23272a',
+                    color: '#fff',
+                    border: 'none',
+                    fontWeight: 500,
+                    fontSize: 14,
+                    boxShadow: '0 1px 4px #181a1b',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                    opacity: 1,
+                    textAlign: 'center'
+                  }}
+                >Add</button>
               </div>
             </form>
           </div>

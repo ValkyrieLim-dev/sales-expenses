@@ -47,7 +47,24 @@ function Inventory() {
           onChange={(e) => setQuantity(e.target.value)}
           style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid #23272a', fontSize: 17, width: 140, background: '#23272a', color: '#fff' }}
         />
-        <button onClick={addItem} style={{ padding: '10px 24px', borderRadius: 8, background: '#7289da', color: '#fff', fontWeight: 700, border: 'none', fontSize: 17, boxShadow: '0 2px 8px #7289da55', cursor: 'pointer' }}>Add Item</button>
+        <button 
+          onClick={addItem}
+          style={{
+            padding: '10px 0',
+            minWidth: 120,
+            borderRadius: 8,
+            background: '#23272a',
+            color: '#fff',
+            border: 'none',
+            fontWeight: 500,
+            fontSize: 14,
+            boxShadow: '0 1px 4px #181a1b',
+            cursor: 'pointer',
+            transition: 'background 0.2s',
+            opacity: 1,
+            textAlign: 'center'
+          }}
+        >Add Item</button>
       </div>
       <h2 style={{ fontWeight: 700, fontSize: 22, marginBottom: 18, color: '#fff' }}>Items List</h2>
       <table style={{ width: '100%', borderCollapse: 'collapse', background: '#23272a', color: '#fff', borderRadius: 12, overflow: 'hidden', boxShadow: '0 2px 16px rgba(0,0,0,0.10)' }}>
